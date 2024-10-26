@@ -1,0 +1,24 @@
+{
+  "name": "ourtravelauth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ericlleixapu/OurTravelAuth.git"
+  },
+  "author": "Eric Lleixa Puigbert",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ericlleixapu/OurTravelAuth/issues"
+  },
+  "homepage": "https://github.com/Ericlleixapu/OurTravelAuth#readme",
+  "dependencies": {
+    "express": "^4.21.1",
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.7.3"
+  }
+}
