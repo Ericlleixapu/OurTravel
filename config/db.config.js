@@ -1,21 +1,17 @@
-require('dotenv').config();  // Carrega les variables d'entorn
-
 const mongoose = require('mongoose');
 
-const dbConfig = {
-    url: process.env.DB_URL,
-    options: {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-    }
-};
+const user = "ourtravel";
+const password = "ourtravelPassword";
+const host = "192.168.1.11";
+const port = 27017;
+const db = "OurTravel";
+
+const dbConfig = "mongodb://"+user+":"+password+"@"+host+":"+port+"/"+db;
 
 // Funció per inicialitzar la connexió amb MongoDB
 const connectToDatabase = async () => {
     try {
-        await mongoose.connect(dbConfig.url, dbConfig.options);
+        await mongoose.connect(dbConfig);
         console.log('Connected to MongoDB successfully');
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
