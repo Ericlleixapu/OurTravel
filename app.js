@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://ourtravel:ourtravelPassword@192.168.1.11:27017/Auth');
+const User = require('./models/User');
+mongoose.connect('mongodb://ourtravel:ourtravelPassword@192.168.1.11:27017/OurTravel');
 
-const User = mongoose.model('User', { name: String });
+const kitty = new User();
+kitty.name = "name";
+kitty.email = "email";
 
-const kitty = new User({ name: 'Zildjian' });
 kitty.save().then(() => console.log('meow'));
