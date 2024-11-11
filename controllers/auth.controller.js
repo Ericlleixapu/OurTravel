@@ -8,7 +8,7 @@ exports.register = async (req, res) => {
         const user = new User({ email, password, name });
         
         await user.save();
-        res.status(201).send({ message: "User registered successfully" });
+        res.status(201).send({ ok:true, message: "User registered successfully" });
     } catch (error) {
         res.status(500).send({ message: "Error registering user", error });
     }
@@ -17,14 +17,14 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email:email });
         
         if (!user || password != user.password) {
             return res.status(401).send({ message: "Invalid credentials" });
         }
 
         const token = jwt.sign({ id: user._id }, authConfig.jwtSecret, { expiresIn: authConfig.jwtExpiration });
-        res.status(200).send({ message: "Login successful", token });
+        res.status(200).send({ ok:true, message: "Login successful", token });
     } catch (error) {
         res.status(500).send({ message: "Error logging in", error });
     }

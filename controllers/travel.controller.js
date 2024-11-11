@@ -2,8 +2,8 @@ const Travel = require('../models/travel.model');
 
 exports.createTravel = async (req, res) => {
     try {
-        const { name, destinations, dates } = req.body;
-        const travel = new Travel({ name, destinations, dates, createdBy: req.userId });
+        let { travel } = req.body;
+        travel.createdBy = req.userId;
         
         await travel.save();
         res.status(201).send({ message: "Travel created successfully", travel });
@@ -50,3 +50,16 @@ exports.addActivity = async (req, res) => {
         res.status(500).send({ message: "Error adding activity", error });
     }
 };
+
+var fs = require('fs'),
+    request = require('request');
+
+var download = function(uri, filename, callback){
+  request.head(uri, function(err, res, body){
+    request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+  });
+};
+
+download('https://upload.wikimedia.org/wikipedia/commons/4/41/Pulau_Besar.jpg', 'google.png', function(){
+  console.log('done');
+});

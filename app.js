@@ -9,14 +9,26 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.use((req,res,next) =>{
+    req.time = new Date(Date.now()).toString();
+    console.log(req.method,req.hostname, req.path);
+    next();
+});
+
 // Connexió a la base de dades
 connectToDatabase();
 
 // Rutes
 const authRoutes = require('./routes/auth.routes');
+const filesRoutes = require('./routes/files.routes');
 const userRoutes = require('./routes/user.routes');
+const travelRoutes = require('./routes/travel.routes');
+
 app.use('/api/auth', authRoutes);
+app.use('/api/files', filesRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/travels', travelRoutes);
+
 
 // Inicialitza el servidor
 const PORT = process.env.PORT || 3000;
