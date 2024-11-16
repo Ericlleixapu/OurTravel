@@ -30,6 +30,9 @@ const userSchema = new Schema({
     profileImage:{
         type: String
     },
+    profileImageUrl:{
+        type: String
+    },
     travels: [
         {
             type: mongoose.Schema.Types.ObjectId,

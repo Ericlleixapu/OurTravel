@@ -25,9 +25,9 @@ const userRoutes = require('./routes/user.routes');
 const travelRoutes = require('./routes/travel.routes');
 
 app.use('/api/auth', authRoutes);
-app.use('/api/files', filesRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/travels', travelRoutes);
+app.use('/api/file', filesRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/travel', travelRoutes);
 
 
 // Inicialitza el servidor

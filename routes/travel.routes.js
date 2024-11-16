@@ -9,6 +9,9 @@ router.post('/', authMiddleware, travelController.createTravel);
 // Ruta per obtenir tots els viatges d'un usuari autenticat
 router.get('/', authMiddleware, travelController.getAllTravels);
 
+// Ruta per obtenir tots els viatges d'un usuari autenticat
+router.delete('/:travelId', authMiddleware, travelController.removeTravel);
+
 // Ruta per afegir una destinació a un viatge
 router.post('/:travelId/destination', authMiddleware, travelController.addDestination);
 

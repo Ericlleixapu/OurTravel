@@ -14,6 +14,7 @@ exports.uploadProfileImage = async (req, res) => {
       });
     }
     user.profileImage = req.file.filename;
+    user.profileImageUrl = "http://localhost:3000/api/file/profileImage/" + user.profileImage;
     await user.save();
     res.status(200).json({ message: 'Imagen subida con éxito', file: req.file.filename });
   } else {
