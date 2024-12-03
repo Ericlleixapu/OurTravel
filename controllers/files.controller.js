@@ -25,7 +25,6 @@ exports.uploadProfileImage = async (req, res) => {
 exports.getProfileImage = async (req, res) => {
   let profileImage = req.params.profileImage;
 
-
   fs.exists('./uploads/profileImages/' + profileImage, (exists) => {
     if (exists) {
       fs.createReadStream('./uploads/profileImages/' + profileImage).pipe(res);

@@ -53,7 +53,7 @@ const travelSchema = new mongoose.Schema({
             ref: 'User'
         }
     ],
-    createdBy: {
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -71,20 +71,5 @@ const travelSchema = new mongoose.Schema({
         default: Date.now
     }
 });
-
-/*    id?: string;
-    name?: string;
-    destinations: Destination[];
-    journeys: Journey[];
-    hotels: Hotel[];
-    activities: Activity[];
-    expenses: Expense[];
-    images: Image[];
-    documents: TravelDocument[];
-    members: User[];
-    createdBy: User;
-    dateFrom?: Date|null; 
-    dateTo?: Date|null;
-    createdOn: Date;*/
 
 module.exports = mongoose.model('Travel', travelSchema);
