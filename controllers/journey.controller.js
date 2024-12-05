@@ -3,7 +3,7 @@ const Journey = require('../models/journey.model');
 exports.getJourneysByTravel = async (req, res) => {
     try {
         const { travelId } = req.params;
-        const journeys = await Journey.find({ travelId }).sort({ dateFrom: 1 }).populate('from').populate('to');
+        const journeys = await Journey.find({ travelId }).populate('from').populate('to').sort({dateTimeFrom: 1 , dateTimeTo: 1});
         res.status(200).json(journeys);
     } catch (error) {
         console.error(error);

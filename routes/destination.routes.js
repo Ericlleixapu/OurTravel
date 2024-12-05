@@ -6,6 +6,12 @@ const authMiddleware = require('../middleware/auth.middleware'); // Middleware d
 // Obtenir totes les destinacions d'un viatge
 router.get('/travel/:travelId', authMiddleware, destinationController.getDestinationsByTravel);
 
+// Obtenir totes les destinacions d'un viatge
+router.get('/countries', authMiddleware, destinationController.getCountryList);
+
+// Obtenir totes les destinacions d'un viatge
+router.get('/cities/:country', authMiddleware, destinationController.getCityList);
+
 // Afegir una nova destinació
 router.post('/', authMiddleware, destinationController.addDestination);
 

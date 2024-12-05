@@ -1,4 +1,6 @@
 const Destination = require('../models/destination.model');
+const countries = require('../data/countries.js');
+const cities = require('../data/countries-cities.js');
 const ImageController = require('../controllers/images.controller');
 
 exports.getDestinationsByTravel = async (req, res) => {
@@ -9,6 +11,25 @@ exports.getDestinationsByTravel = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error obtenint les destinacions' });
+    }
+};
+
+exports.getCountryList = async (req, res) => {
+    try {
+        res.status(200).json(countries);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error obtenint els paisos' });
+    }
+};
+
+exports.getCityList = async (req, res) => {
+    try {
+        const country = cities.find(obj => obj.country == req.params.country);
+        res.status(200).json(country.cities);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error obtenint les ciutats' });
     }
 };
 

@@ -1,4 +1,7 @@
 const Travel = require('../models/travel.model');
+const Destination = require('../models/destination.model');
+const Journey = require('../models/journey.model');
+
 exports.createTravel = async (req, res) => {
     try {
         let travel = new Travel();
@@ -84,5 +87,22 @@ exports.getAllTravels = async (req, res) => {
     } catch (error) {
         res.status(500).send({ message: "Error fetching travels", error });
     }
+    
+};
+
+exports.getTravelById = async (req, res) => {
+
+    try {
+        const travel = await Travel.find({ id: req.params.id, owner: req.userId });
+        travel.destinations = await Destination.find({ travelId: req.params.id });
+        travel.journeys = await Journey.find({ travelId: req.params.id });
+        //travel.hotels = await Hotel.find({ travelId: req.params.id });
+        //travel.activities = await Activity.find({ travelId: req.params.id });
+        //travel.members = await User.find({ _id: { $in: travel.members } });
+        res.status(200).send(travel);
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching travels", error });
+    }
+    
 };
 

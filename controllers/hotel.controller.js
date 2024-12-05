@@ -3,7 +3,7 @@ const Hotel = require('../models/hotel.model');
 exports.getHotelsByTravel = async (req, res) => {
     try {
         const { travelId } = req.params;
-        const hotels = await Hotel.find({ travelId }).sort({ dateFrom: 1 });
+        const hotels = await Hotel.find({ travelId }).sort({ dateFrom: 1 }).populate('destination');
         res.status(200).json(hotels);
     } catch (error) {
         console.error(error);
