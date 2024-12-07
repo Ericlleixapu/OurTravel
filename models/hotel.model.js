@@ -30,19 +30,10 @@ const hotelSchema = new Schema({
     hotelDocuments: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'Document'
         }
     ]
 });
 
-/*    
-    _id: string;
-    name: string;
-    destination: Destination;
-    address: string;
-    comment: string;
-    travelId: Travel;
-    hotelDocuments
-     */
 
 module.exports = mongoose.model('Hotel', hotelSchema);
