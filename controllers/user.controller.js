@@ -9,6 +9,29 @@ exports.getProfile = async (req, res) => {
     }
 };
 
+exports.searchUsers = async (req, res) => {
+    const { query } = req.params;
+
+    try {
+      const users = await User.find({
+        $or: [
+          { name: { $regex: query, $options: 'i' } },
+          { surname: { $regex: query, $options: 'i' } },
+          { alias: { $regex: query, $options: 'i' } },
+          { email: { $regex: query, $options: 'i' } }
+        ]
+      }).select('-email -password');
+  
+      if (users.length == 0) {
+        return res.status(404).json({ message: 'No Users found.' });
+      }
+      res.status(200).json(users);
+    } catch (error) {
+      console.error('Error buscando usuarios:', error.message);
+      res.status(500).json({ message: 'Error buscando usuarios', error });
+    }
+};
+
 exports.updateProfile = async (req, res) => {
     try {
         const { user } = req.body;            
