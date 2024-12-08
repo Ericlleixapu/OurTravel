@@ -3,6 +3,8 @@ const Destination = require('../models/destination.model');
 const Journey = require('../models/journey.model');
 const Hotel = require('../models/hotel.model');
 const Activity = require('../models/activity.model');
+const Image = require('../models/image.model');
+const filesController = require('../controllers/files.controller');
 
 exports.createTravel = async (req, res) => {
     try {
@@ -60,7 +62,7 @@ exports.createTravel = async (req, res) => {
 
 exports.removeTravel = async (req, res) => {
     try {
-        travelId = req.params.travelId;
+        const travelId = req.params.travelId;
         const travel = await Travel.findById(travelId);
 
         if (travel == null) {
@@ -68,6 +70,11 @@ exports.removeTravel = async (req, res) => {
         }
 
         if (travel.owner == req.userId) {
+            await Destination.deleteMany({ travelId: travel._id });
+            await Journey.deleteMany({ travelId: travel._id });
+            await Hotel.deleteMany({ travelId: travel._id });
+            await Activity.deleteMany({ travelId: travel._id });
+            
             await Travel.deleteOne(travel);
             res.status(201).send({ message: "Travel removed successfully", travel });
 
@@ -140,9 +147,10 @@ exports.getTravelById = async (req, res) => {
     try {
         const travel = await Travel.findOne({ _id: req.params.id, members: req.userId }).populate({ path: 'members', select: '-password' });
         travel.destinations = await Destination.find({ travelId: travel._id }).sort({ dateFrom: 1 });
-        travel.journeys = await Journey.find({ travelId: travel._id }).sort({ dateTimeFrom: 1, dateTimeTo: 1 });
-        travel.hotels = await Hotel.find({ travelId: travel._id }).sort({ dateFrom: 1 });
-        travel.activities = await Activity.find({ travelId: travel._id }).sort({ date: 1 });
+        travel.journeys = await Journey.find({ travelId: travel._id }).populate('from').populate('to').sort({ dateTimeFrom: 1, dateTimeTo: 1 });
+        travel.hotels = await Hotel.find({ travelId: travel._id }).populate('destination').sort({ dateFrom: 1 });
+        travel.activities = await Activity.find({ travelId: travel._id }).populate('destination').sort({ date: 1 });
+        travel.images = await Image.find({ travelId: travel._id }).sort({ uploadedAt: 1 });
         res.status(200).send(travel);
     } catch (error) {
         res.status(500).send({ message: "Error fetching travels", error });
@@ -150,4 +158,25 @@ exports.getTravelById = async (req, res) => {
     }
 
 };
+
+exports.setTravelName = async (travelId) => {
+    let travel = await Travel.findOne({ _id: travelId });
+    let destinations = await Destination.find({ travelId: travel._id }).sort({ dateFrom: 1 });
+    travel.dateFrom = destinations[0].dateFrom;
+    travel.dateTo = destinations[destinations.length - 1].dateTo;
+
+    if (destinations.length == 1) {
+        if (travel.name == 'De moment enlloc') {
+            travel.name = destinations[0].location + ' ' + travel.dateFrom.getFullYear();
+        }
+        travel.imageUrl = destinations[0].imageUrl;
+    } else if(destinations.length > 1) {
+        travel.name = destinations[0].country + ' ' + travel.dateFrom.getFullYear();
+        
+        const img = await filesController.setDestinationImage({country: destinations[0].country, location: ''});
+        travel.imageUrl = "http://localhost:3000/api/file/destinationImage/"+ img;
+    }
+
+    travel.save();
+}
 

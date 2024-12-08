@@ -5,6 +5,10 @@ const travelSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    imageUrl: {
+        type: String,
+        trim: true
+    },
     destinations: [
         {
             type: mongoose.Schema.Types.ObjectId,

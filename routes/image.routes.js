@@ -1,25 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middleware/auth.middleware'); // Middleware d'autenticació
-const filesController = require('../controllers/files.controller');
+const authMiddleware = require('../middleware/auth.middleware');
+const imageController = require('../controllers/images.controller');
 
-var multer = require("multer")
-const path = require('path');
-var storage = multer.diskStorage(
-    {
-        destination: './uploads/profileImages',
-        filename: function ( req, file, cb ) {
-            cb( null, Date.now()+ path.extname(file.originalname).toLowerCase());
-        }
-    }
-);
-var upload = multer({ storage: storage });
-
-router.post('/profileImage', upload.single('profileImage'), authMiddleware, filesController.uploadProfileImage);
-router.get('/profileImage/:profileImage', filesController.getProfileImage);
-
-
-
-
+router.get('/travel/:travelId', authMiddleware, imageController.getImagesByTravel);
+router.post('/', authMiddleware, imageController.addImage);
+router.put('/:id', authMiddleware, imageController.updateImage);
+router.delete('/:id', authMiddleware, imageController.deleteImage);
 
 module.exports = router;

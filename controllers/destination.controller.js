@@ -1,7 +1,8 @@
 const Destination = require('../models/destination.model');
 const countries = require('../data/countries.js');
 const cities = require('../data/countries-cities.js');
-const ImageController = require('../controllers/images.controller');
+const filesController = require('../controllers/files.controller');
+const travelController = require('../controllers/travel.controller');
 
 exports.getDestinationsByTravel = async (req, res) => {
     try {
@@ -36,10 +37,14 @@ exports.getCityList = async (req, res) => {
 exports.addDestination = async (req, res) => {
     try {
         const destination = new Destination(req.body);
-        //const img = await ImageController.setDestinationImage(destination);
-        //destination.imageUrl = "http://localhost:3000/api/image/destinationImage/"+ img;
+        const img = await filesController.setDestinationImage(destination);
+        destination.imageUrl = "http://localhost:3000/api/file/destinationImage/"+ img;
+        
         const newDestination = await destination.save();
+
         res.status(201).json(newDestination);
+
+        travelController.setTravelName(newDestination.travelId);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error, message: 'Error afegint la destinació' });
