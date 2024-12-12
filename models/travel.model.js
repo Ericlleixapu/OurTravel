@@ -9,6 +9,16 @@ const travelSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    public: {
+        type: Boolean,
+        default: false,
+    },
+    followers: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+    ],
     destinations: [
         {
             type: mongoose.Schema.Types.ObjectId,

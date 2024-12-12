@@ -1,4 +1,6 @@
 const Image = require('../models/image.model');
+const User = require('../models/user.model');
+const fs = require('fs');
 
 exports.getImagesByTravel = async (req, res) => {
     try {
@@ -20,6 +22,17 @@ exports.addImage = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error, message: 'Error afegint la destinació' });
+    }
+};
+exports.addComment = async (req, res) => {
+    try {
+        let user = await User.findById(req.userId);
+        let comment = user.alias + ' : ' + req.body.comment;
+        let image = await Image.findByIdAndUpdate(req.params.id, { $push: { comments: comment } }, { new: true })
+        res.status(201).send(image);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error, message: 'Error afegint el comentari' });
     }
 };
 
@@ -48,6 +61,10 @@ exports.deleteImage = async (req, res) => {
         }
 
         await Image.deleteOne(image);
+        fs.unlink('./uploads/images/' + image.filename, (err) => {
+            if (err) throw err;
+            console.log('image deleted');
+        });
         res.status(201).send({ message: "Image removed successfully", image });
 
 

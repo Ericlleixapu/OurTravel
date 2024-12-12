@@ -1,21 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const travelController = require('../controllers/travel.controller');
-const authMiddleware = require('../middleware/auth.middleware'); // Middleware d'autenticació
+const authMiddleware = require('../middleware/auth.middleware');
 
-// Ruta per crear un nou viatge
-router.post('/', authMiddleware, travelController.createTravel);
-
-// Ruta per obtenir tots els viatges d'un usuari autenticat
 router.get('/', authMiddleware, travelController.getAllTravels);
-// Ruta per obtenir tots els viatges d'un usuari autenticat
 router.get('/:id', authMiddleware, travelController.getTravelById);
+router.post('/', authMiddleware, travelController.createTravel);
+router.delete('/:travelId', authMiddleware, travelController.removeTravel);
 
 router.put('/addMember/:travelId', authMiddleware, travelController.addMemberToTravel);
-
 router.put('/removeMember/:travelId', authMiddleware, travelController.removeMemberToTravel);
 
-// Ruta per obtenir tots els viatges d'un usuari autenticat
-router.delete('/:travelId', authMiddleware, travelController.removeTravel);
+router.get('/public', travelController.getAllPublicTravels);
+router.get('/public/:id', travelController.getPublicTravelById);
+router.put('/public/:travelId', travelController.addFollowerToTravel);
+router.put('/changeVisibility/:travelId', authMiddleware, travelController.changeVisibility);
 
 module.exports = router;

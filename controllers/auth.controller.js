@@ -6,6 +6,8 @@ exports.register = async (req, res) => {
     try {
         const { email, password, name } = req.body;
         const user = new User({ email, password, name });
+        let size = await User.countDocuments({});
+        user.alias = 'User'+Math.round(Math.random() * size*100)
         
         await user.save();
         res.status(201).send({ ok:true, message: "User registered successfully" });

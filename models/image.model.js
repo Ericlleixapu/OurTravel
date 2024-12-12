@@ -1,16 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-/*    _id?:string
-    filename: string;
-    imageUrl: string;
-    description?: string;
-    owner: User;
-    viewers?: User[];
-    comments: string[];
-    uploadedAt: Date;    
-    travelId: string*/
-
 const imageSchema = new Schema({
     filename: {
         type: String,
@@ -20,6 +10,10 @@ const imageSchema = new Schema({
     imageUrl: {
         type: String,
         required: true,
+        trim: true
+    },
+    fileType: {
+        type: String,
         trim: true
     },
     description: {

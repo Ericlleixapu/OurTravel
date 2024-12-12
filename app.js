@@ -21,6 +21,7 @@ connectToDatabase();
 // Rutes
 const authRoutes = require('./routes/auth.routes');
 const imageRoutes = require('./routes/image.routes');
+const documentRoutes = require('./routes/document.routes');
 const filesRoutes = require('./routes/files.routes');
 const userRoutes = require('./routes/user.routes');
 const travelRoutes = require('./routes/travel.routes');
@@ -31,6 +32,7 @@ const activityRoutes = require('./routes/activity.routes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/image', imageRoutes);
+app.use('/api/document', documentRoutes);
 app.use('/api/file', filesRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/travel', travelRoutes);

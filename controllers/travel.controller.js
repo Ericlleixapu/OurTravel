@@ -4,6 +4,7 @@ const Journey = require('../models/journey.model');
 const Hotel = require('../models/hotel.model');
 const Activity = require('../models/activity.model');
 const Image = require('../models/image.model');
+const Document = require('../models/document.model');
 const filesController = require('../controllers/files.controller');
 
 exports.createTravel = async (req, res) => {
@@ -74,6 +75,8 @@ exports.removeTravel = async (req, res) => {
             await Journey.deleteMany({ travelId: travel._id });
             await Hotel.deleteMany({ travelId: travel._id });
             await Activity.deleteMany({ travelId: travel._id });
+            await Image.deleteMany({ travelId: travel._id });
+            await Document.deleteMany({ travelId: travel._id });
             
             await Travel.deleteOne(travel);
             res.status(201).send({ message: "Travel removed successfully", travel });
@@ -142,6 +145,62 @@ exports.removeMemberToTravel = async (req, res) => {
 
 };
 
+exports.getAllPublicTravels = async (req, res) => {
+    try {
+        const travels = await Travel.find({ public: true })
+            .populate({ path: 'owner', select: '-password' })
+            .select('-members')
+            .select('-images')
+            .select('-documents');            
+        res.status(200).send(travels);
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching travels", error });
+    }
+}
+exports.getPublicTravelById = async (req, res) => {
+    try {
+        const travel = await Travel.findOne({ _id: req.params.id,public: true })
+            .populate({ path: 'owner', select: '-password' })
+            .select('-members')
+            .select('-images')
+            .select('-documents');            
+            travel.destinations = await Destination.find({ travelId: req.params.id });
+            travel.journeys = await Journey.find({ travelId: req.params.id }).populate('from').populate('to');
+            travel.hotels = await Hotel.find({ travelId: req.params.id }).populate('destination');
+            travel.activities = await Activity.find({ travelId: req.params.id }).populate('destination');
+        res.status(200).send(travel);
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching travels", error });
+    }
+}
+exports.addFollowerToTravel = async (req, res) => {
+    const user = req.body;
+    try {
+        let travel = await Travel.findOne({ _id: req.params.travelId, public: true });
+        if (travel == null) {
+            res.status(404).send({ message: "Travel not found" });
+        } else {
+            await Travel.findByIdAndUpdate(travel._id, { $addToSet: { followers: user._id } }, { new: true });
+            res.status(200).send({ message: "Member added to travel successfully" });
+        }
+    } catch (error) {
+        res.status(500).send({ message: "Error adding the member", error });
+    }
+}
+exports.changeVisibility = async (req, res) => {
+    try {
+        let travel = await Travel.findOne({ _id: req.params.travelId, owner: req.userId });
+        if (travel == null) {
+            res.status(401).send({ message: "Only the owner can change the visibility" });
+        } else {
+            await Travel.findByIdAndUpdate(travel._id, { $set: { public: !travel.public } }, { new: true });
+            res.status(200).send({ message: "Visibility changed successfully" });
+        }
+    } catch (error) {
+        res.status(500).send({ message: "Error adding the member", error });
+    }
+}
+
 exports.getTravelById = async (req, res) => {
 
     try {
@@ -151,6 +210,7 @@ exports.getTravelById = async (req, res) => {
         travel.hotels = await Hotel.find({ travelId: travel._id }).populate('destination').sort({ dateFrom: 1 });
         travel.activities = await Activity.find({ travelId: travel._id }).populate('destination').sort({ date: 1 });
         travel.images = await Image.find({ travelId: travel._id }).sort({ uploadedAt: 1 });
+        travel.documents = await Document.find({ travelId: travel._id }).sort({ uploadedAt: 1 });
         res.status(200).send(travel);
     } catch (error) {
         res.status(500).send({ message: "Error fetching travels", error });

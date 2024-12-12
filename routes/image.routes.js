@@ -6,6 +6,7 @@ const imageController = require('../controllers/images.controller');
 router.get('/travel/:travelId', authMiddleware, imageController.getImagesByTravel);
 router.post('/', authMiddleware, imageController.addImage);
 router.put('/:id', authMiddleware, imageController.updateImage);
+router.put('/comment/:id', authMiddleware, imageController.addComment);
 router.delete('/:id', authMiddleware, imageController.deleteImage);
 
 module.exports = router;

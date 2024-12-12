@@ -1,6 +1,7 @@
 const fs = require('fs');
 const User = require('../models/user.model');
 const Image = require('../models/image.model');
+const Document = require('../models/document.model');
 const Travel = require('../models/travel.model');
 const https = require('https');
 const request = require('request');
@@ -36,7 +37,7 @@ exports.getTravelImage = async (req, res) => {
 exports.uploadTravelDocument = async (req, res) => {
 
   if (req.file) {
-    res.status(200).json({ ok: true, message: 'Dcomento subido con éxito', filename: req.file.filename, documentUrl: "http://localhost:3000/api/file/travelImage/" + req.file.filename });
+    res.status(200).json({ ok: true, message: 'Dcomento subido con éxito', filename: req.file.filename, documentUrl: "http://localhost:3000/api/file/travelDocument/" + req.file.filename });
   } else {
     res.status(400).json({ error: 'Error al subir el Documento' });
   }
@@ -45,8 +46,8 @@ exports.uploadTravelDocument = async (req, res) => {
 exports.getTravelDocument = async (req, res) => {
   let travelDocument = req.params.travelDocument;
 
-  let image = await Image.findOne({ filename: travelDocument });
-  let travel = await Travel.findOne({ _id: image.travelId, members: req.userId });
+  let document = await Document.findOne({ filename: travelDocument });
+  let travel = await Travel.findOne({ _id: document.travelId, members: req.userId });
   if (travel != null) {
     fs.exists('./uploads/documents/' + travelDocument, (exists) => {
       if (exists) {
