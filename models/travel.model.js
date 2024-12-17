@@ -5,7 +5,7 @@ const travelSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    imageUrl: {
+    imageFile: {
         type: String,
         trim: true
     },

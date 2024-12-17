@@ -38,7 +38,7 @@ exports.addDestination = async (req, res) => {
     try {
         const destination = new Destination(req.body);
         const img = await filesController.setDestinationImage(destination);
-        destination.imageUrl = "http://localhost:3000/api/file/destinationImage/"+ img;
+        destination.imageFile = img;
         
         const newDestination = await destination.save();
 

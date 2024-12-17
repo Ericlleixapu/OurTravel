@@ -28,7 +28,7 @@ const destinationSchema = new Schema({
         ref: 'Travel',
         required: true
     },
-    imageUrl: {
+    imageFile: {
         type: String
     }
 });

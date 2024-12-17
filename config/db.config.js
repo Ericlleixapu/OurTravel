@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 
-const user = "ourtravel";
-const password = "ourtravelPassword";
-const host = "192.168.1.11";
-const port = 27017;
-const db = "OurTravel";
+process.loadEnvFile();
+const user = process.env.MONGO_USER || "defaultUser";
+const password = process.env.MONGO_PASSWORD || "defaultPassword";
+const host = process.env.MONGO_HOST || "localhost";
+const port = process.env.MONGO_PORT || 27017;
+const db = process.env.MONGO_DB || "defaultDB";
 
 const dbConfig = "mongodb://"+user+":"+password+"@"+host+":"+port+"/"+db;
 

@@ -7,10 +7,15 @@ const https = require('https');
 const request = require('request');
 const path = require('path');
 
+
+process.loadEnvFile();
+const apiKey = process.env.GOOGLE_API_KEY;
+const searchEngineId = process.env.SEARCH_ENGINE_ID;
+
 exports.uploadTravelImage = async (req, res) => {
 
   if (req.file) {
-    res.status(200).json({ ok: true, message: 'Imagen subida con éxito', filename: req.file.filename, imageUrl: "http://localhost:3000/api/file/travelImage/" + req.file.filename });
+    res.status(200).json({ ok: true, message: 'Imagen subida con éxito', filename: req.file.filename });
   } else {
     res.status(400).json({ error: 'Error al subir la imagen' });
   }
@@ -37,7 +42,7 @@ exports.getTravelImage = async (req, res) => {
 exports.uploadTravelDocument = async (req, res) => {
 
   if (req.file) {
-    res.status(200).json({ ok: true, message: 'Dcomento subido con éxito', filename: req.file.filename, documentUrl: "http://localhost:3000/api/file/travelDocument/" + req.file.filename });
+    res.status(200).json({ ok: true, message: 'Dcomento subido con éxito', filename: req.file.filename });
   } else {
     res.status(400).json({ error: 'Error al subir el Documento' });
   }
@@ -72,7 +77,6 @@ exports.uploadProfileImage = async (req, res) => {
       });
     }
     user.profileImage = req.file.filename;
-    user.profileImageUrl = "http://localhost:3000/api/file/profileImage/" + user.profileImage;
     await user.save();
     res.status(200).json({ message: 'Imagen subida con éxito', file: req.file.filename });
   } else {
@@ -103,10 +107,6 @@ exports.getDestinationImage = async (req, res) => {
     }
   })
 }
-
-
-const apiKey = 'AIzaSyC9I6QsbPJLoIfVXx3V4kywGLxsYblbrhU';
-const searchEngineId = 'a5e4686f379c243b5';
 
 exports.setDestinationImage = (destination) => {
   const query = destination.country + '%20' + destination.location;

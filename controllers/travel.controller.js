@@ -148,7 +148,7 @@ exports.removeMemberToTravel = async (req, res) => {
 exports.getAllPublicTravels = async (req, res) => {
     try {
         const travels = await Travel.find({ public: true })
-            .populate({ path: 'owner', select: '-password -name -profileImageUrl -email -surname -travels -_id' })
+            .populate({ path: 'owner', select: '-password -name -email -surname -travels -_id' })
             .select('-members -images -documents');
         res.status(200).send(travels);
     } catch (error) {
@@ -158,7 +158,7 @@ exports.getAllPublicTravels = async (req, res) => {
 exports.getPublicTravelByUser = async (req, res) => {
     try {
         const travels = await Travel.find({ public: true, followers: req.userId })
-            .populate({ path: 'owner', select: '-password -name -profileImageUrl -email -surname -travels -_id' })
+            .populate({ path: 'owner', select: '-password -name -email -surname -travels -_id' })
             .select('-members')
             .select('-images')
             .select('-documents');
@@ -168,11 +168,11 @@ exports.getPublicTravelByUser = async (req, res) => {
     }
 }
 exports.getPublicTravelByCountry = async (req, res) => {
-    try {        
+    try {
         const regex = new RegExp(req.params.country, 'i');
         const destinations = await Destination.find({ country: regex });
-        const travels = await Travel.find({ _id : { $in: destinations.map(destination => destination.travelId) }, public: true})
-            .populate({ path: 'owner', select: '-password -name -profileImageUrl -email -surname -travels -_id' })
+        const travels = await Travel.find({ _id: { $in: destinations.map(destination => destination.travelId) }, public: true })
+            .populate({ path: 'owner', select: '-password -name -email -surname -travels -_id' })
             .select('-members')
             .select('-images')
             .select('-documents');
@@ -185,7 +185,7 @@ exports.getPublicTravelByCountry = async (req, res) => {
 exports.getPublicTravelById = async (req, res) => {
     try {
         const travel = await Travel.findOne({ _id: req.params.id, public: true })
-            .populate({ path: 'owner', select: '-password -name -profileImageUrl -email -surname -travels -_id' })
+            .populate({ path: 'owner', select: '-password -name -email -surname -travels -_id' })
             .select('-members')
             .select('-images')
             .select('-documents');
@@ -270,12 +270,12 @@ exports.setTravelName = async (travelId) => {
         if (travel.name == 'De moment enlloc') {
             travel.name = destinations[0].location + ' ' + travel.dateFrom.getFullYear();
         }
-        travel.imageUrl = destinations[0].imageUrl;
+        travel.imageFile = destinations[0].imageFile;
     } else if (destinations.length > 1) {
         travel.name = destinations[0].country + ' ' + travel.dateFrom.getFullYear();
 
         const img = await filesController.setDestinationImage({ country: destinations[0].country, location: '' });
-        travel.imageUrl = "http://localhost:3000/api/file/destinationImage/" + img;
+        travel.imageFile = img;
     }
 
     travel.save();
