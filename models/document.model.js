@@ -18,11 +18,6 @@ const DocumentSchema = new Schema({
     type: String,
     trim: true
   },
-  documentUrl: {
-    type: String,
-    trim: true,
-    immutable: true,
-  },
   uploadDate: {
     type: Date,
     default: Date.now

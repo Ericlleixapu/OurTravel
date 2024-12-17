@@ -7,10 +7,10 @@ const authMiddleware = require('../middleware/auth.middleware'); // Middleware d
 router.get('/travel/:travelId', authMiddleware, destinationController.getDestinationsByTravel);
 
 // Obtenir totes les destinacions d'un viatge
-router.get('/countries', authMiddleware, destinationController.getCountryList);
+router.get('/countries', destinationController.getCountryList);
 
 // Obtenir totes les destinacions d'un viatge
-router.get('/cities/:country', authMiddleware, destinationController.getCityList);
+router.get('/cities/:country', destinationController.getCityList);
 
 // Afegir una nova destinació
 router.post('/', authMiddleware, destinationController.addDestination);

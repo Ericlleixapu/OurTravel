@@ -7,11 +7,6 @@ const imageSchema = new Schema({
         required: true,
         trim: true
     },
-    imageUrl: {
-        type: String,
-        required: true,
-        trim: true
-    },
     fileType: {
         type: String,
         trim: true

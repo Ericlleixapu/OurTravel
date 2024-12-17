@@ -33,12 +33,4 @@ const activitySchema = new Schema({
     }
 });
 
-/*    _id?: string;
-    name: string;
-    type: ActivityType;
-    date: Date;
-    destination?: Destination;
-    comment?: string;
-    travelId: string;*/
-
 module.exports = mongoose.model('Activity', activitySchema);

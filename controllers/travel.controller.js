@@ -77,7 +77,7 @@ exports.removeTravel = async (req, res) => {
             await Activity.deleteMany({ travelId: travel._id });
             await Image.deleteMany({ travelId: travel._id });
             await Document.deleteMany({ travelId: travel._id });
-            
+
             await Travel.deleteOne(travel);
             res.status(201).send({ message: "Travel removed successfully", travel });
 
@@ -148,40 +148,81 @@ exports.removeMemberToTravel = async (req, res) => {
 exports.getAllPublicTravels = async (req, res) => {
     try {
         const travels = await Travel.find({ public: true })
-            .populate({ path: 'owner', select: '-password' })
-            .select('-members')
-            .select('-images')
-            .select('-documents');            
+            .populate({ path: 'owner', select: '-password -name -profileImageUrl -email -surname -travels -_id' })
+            .select('-members -images -documents');
         res.status(200).send(travels);
     } catch (error) {
         res.status(500).send({ message: "Error fetching travels", error });
     }
 }
-exports.getPublicTravelById = async (req, res) => {
+exports.getPublicTravelByUser = async (req, res) => {
     try {
-        const travel = await Travel.findOne({ _id: req.params.id,public: true })
-            .populate({ path: 'owner', select: '-password' })
+        const travels = await Travel.find({ public: true, followers: req.userId })
+            .populate({ path: 'owner', select: '-password -name -profileImageUrl -email -surname -travels -_id' })
             .select('-members')
             .select('-images')
-            .select('-documents');            
-            travel.destinations = await Destination.find({ travelId: req.params.id });
-            travel.journeys = await Journey.find({ travelId: req.params.id }).populate('from').populate('to');
-            travel.hotels = await Hotel.find({ travelId: req.params.id }).populate('destination');
-            travel.activities = await Activity.find({ travelId: req.params.id }).populate('destination');
+            .select('-documents');
+        res.status(200).send(travels);
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching travels", error });
+    }
+}
+exports.getPublicTravelByCountry = async (req, res) => {
+    try {        
+        const regex = new RegExp(req.params.country, 'i');
+        const destinations = await Destination.find({ country: regex });
+        const travels = await Travel.find({ _id : { $in: destinations.map(destination => destination.travelId) }, public: true})
+            .populate({ path: 'owner', select: '-password -name -profileImageUrl -email -surname -travels -_id' })
+            .select('-members')
+            .select('-images')
+            .select('-documents');
+        res.status(200).send(travels);
+    } catch (error) {
+        res.status(500).send({ message: "Error fetching travels", error });
+    }
+}
+
+exports.getPublicTravelById = async (req, res) => {
+    try {
+        const travel = await Travel.findOne({ _id: req.params.id, public: true })
+            .populate({ path: 'owner', select: '-password -name -profileImageUrl -email -surname -travels -_id' })
+            .select('-members')
+            .select('-images')
+            .select('-documents');
+        travel.destinations = await Destination.find({ travelId: req.params.id }).sort({ dateFrom: 1 });
+        travel.journeys = await Journey.find({ travelId: req.params.id }).populate('from').populate('to');
+        travel.hotels = await Hotel.find({ travelId: req.params.id }).populate('destination');
+        travel.activities = await Activity.find({ travelId: req.params.id }).populate('destination').sort({ date: 1 });
         res.status(200).send(travel);
     } catch (error) {
         res.status(500).send({ message: "Error fetching travels", error });
     }
 }
+
 exports.addFollowerToTravel = async (req, res) => {
-    const user = req.body;
+    const userId = req.userId;
     try {
         let travel = await Travel.findOne({ _id: req.params.travelId, public: true });
         if (travel == null) {
             res.status(404).send({ message: "Travel not found" });
         } else {
-            await Travel.findByIdAndUpdate(travel._id, { $addToSet: { followers: user._id } }, { new: true });
-            res.status(200).send({ message: "Member added to travel successfully" });
+            await Travel.findByIdAndUpdate(travel._id, { $addToSet: { followers: userId } }, { new: true });
+            res.status(200).send({ message: "Follower added to travel successfully" });
+        }
+    } catch (error) {
+        res.status(500).send({ message: "Error adding the member", error });
+    }
+}
+
+exports.removeFollowerToTravel = async (req, res) => {
+    const userId = req.userId;
+    try {
+        let travel = await Travel.findOne({ _id: req.params.travelId });
+        if (travel == null) {
+            res.status(404).send({ message: "Travel not found" });
+        } else {
+            await Travel.findByIdAndUpdate(travel._id, { $pull: { followers: userId } }, { new: true });
+            res.status(200).send({ message: "Follower removed from the travel successfully" });
         }
     } catch (error) {
         res.status(500).send({ message: "Error adding the member", error });
@@ -230,11 +271,11 @@ exports.setTravelName = async (travelId) => {
             travel.name = destinations[0].location + ' ' + travel.dateFrom.getFullYear();
         }
         travel.imageUrl = destinations[0].imageUrl;
-    } else if(destinations.length > 1) {
+    } else if (destinations.length > 1) {
         travel.name = destinations[0].country + ' ' + travel.dateFrom.getFullYear();
-        
-        const img = await filesController.setDestinationImage({country: destinations[0].country, location: ''});
-        travel.imageUrl = "http://localhost:3000/api/file/destinationImage/"+ img;
+
+        const img = await filesController.setDestinationImage({ country: destinations[0].country, location: '' });
+        travel.imageUrl = "http://localhost:3000/api/file/destinationImage/" + img;
     }
 
     travel.save();
